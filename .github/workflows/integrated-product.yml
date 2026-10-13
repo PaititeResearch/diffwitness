@@ -27,7 +27,7 @@ jobs:
       - name: Checkout exact canonical MACHINE-qualified IdleProof sidecar
         uses: actions/checkout@v7
         with:
-          repository: TFourniax/tooltest-2
+          repository: PaititeResearch/idleproof
           ref: 2b919f7dddeaf3488091017a46f079d8c9718056
           fetch-depth: 0
           path: idleproof

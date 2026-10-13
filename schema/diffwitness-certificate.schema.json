@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/TFourniax/tooltest/blob/main/schema/diffwitness-certificate.schema.json",
+  "$id": "https://github.com/PaititeResearch/diffwitness/blob/main/schema/diffwitness-certificate.schema.json",
   "title": "DiffWitness evidence certificate",
   "description": "Unified envelope for causal, adaptive, assurance, validation-only, and proof-not-required DiffWitness evidence.",
   "oneOf": [

@@ -87,10 +87,10 @@ The benchmark is a regression contract, not a marketing leaderboard.
 
 ## GitHub repository front page
 
-Recommended public repository name:
+Canonical public repository:
 
 ```text
-TFourniax/diffwitness
+PaititeResearch/diffwitness
 ```
 
 Recommended description:

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/TFourniax/tooltest/schema/diffwitness-report-v2.schema.json",
+  "$id": "https://github.com/PaititeResearch/diffwitness/blob/main/schema/diffwitness-report-v2.schema.json",
   "title": "DiffWitness Evidence Certificate v2",
   "type": "object",
   "required": [

@@ -184,7 +184,7 @@ jobs:
       - run: test "$(git rev-parse HEAD)" = "$CANONICAL_SHA"
       - uses: actions/checkout@v7
         with:
-          repository: TFourniax/tooltest-2
+          repository: PaititeResearch/idleproof
           ref: agent/prealpha-p0-hardening-20260823
           fetch-depth: 0
           path: idleproof

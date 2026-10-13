@@ -121,8 +121,8 @@ class CliTests(unittest.TestCase):
 
             workflow = (repo / ".github" / "workflows" / "diffwitness.yml").read_text(encoding="utf-8")
             self.assertIn("uses: actions/checkout@v7", workflow)
-            self.assertIn(f"uses: TFourniax/tooltest@v{__version__}", workflow)
-            self.assertNotIn("TFourniax/tooltest@main", workflow)
+            self.assertIn(f"uses: PaititeResearch/diffwitness@v{__version__}", workflow)
+            self.assertNotIn("PaititeResearch/diffwitness@main", workflow)
             self.assertIn('test: "pytest -q \\"tests/smoke suite\\""', workflow)
             self.assertIn('prepare: "python -m pip install -e ."', workflow)
             self.assertIn("policy: balanced", workflow)

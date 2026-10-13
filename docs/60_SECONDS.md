@@ -180,7 +180,7 @@ The note does not rewrite the commit SHA.
   with:
     fetch-depth: 0
 
-- uses: TFourniax/tooltest@main
+- uses: PaititeResearch/diffwitness@main
   with:
     base: ${{ github.event.pull_request.base.sha }}
     candidate: ${{ github.event.pull_request.head.sha }}

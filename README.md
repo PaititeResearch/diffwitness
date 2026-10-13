@@ -122,7 +122,7 @@ A successful `pipx install` followed by `dw: command not found` means the pipx a
 Once the repository is public, a Git install can be used without cloning manually:
 
 ```bash
-pipx install git+https://github.com/TFourniax/tooltest.git
+pipx install git+https://github.com/PaititeResearch/diffwitness.git
 pipx ensurepath
 ```
 
@@ -467,7 +467,7 @@ Example PR gate:
     fetch-depth: 0
 
 - name: DiffWitness
-  uses: TFourniax/tooltest@main
+  uses: PaititeResearch/diffwitness@main
   with:
     base: ${{ github.event.pull_request.base.sha }}
     candidate: ${{ github.event.pull_request.head.sha }}

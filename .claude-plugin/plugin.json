@@ -5,8 +5,8 @@
   "author": {
     "name": "Thomas Fournier"
   },
-  "homepage": "https://github.com/TFourniax/tooltest",
-  "repository": "https://github.com/TFourniax/tooltest",
+  "homepage": "https://github.com/PaititeResearch/diffwitness",
+  "repository": "https://github.com/PaititeResearch/diffwitness",
   "license": "MIT",
   "keywords": ["testing", "verification", "coding-agents", "proof", "git"],
   "skills": "./skills/",

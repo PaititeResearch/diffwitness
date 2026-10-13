@@ -16,7 +16,7 @@ Before cutting a tag:
 8. the release-package and standalone-binary preflight jobs are green on the release candidate commit.
 9. every release-required scenario has been tested and validated by a human in
    real conditions on the coordinated release candidate, with evidence in the
-   [canonical registry](https://github.com/TFourniax/tooltest/issues/74).
+   [canonical registry](https://github.com/PaititeResearch/diffwitness/issues/74).
 
 HUMAN PASS is reserved for that human validation. Record the tester, date,
 scenario, environment and exact source/installed artifact. Automated tests and
@@ -77,21 +77,21 @@ Then a tagged release can publish the wheel/sdist through OIDC.
 
 ## GitHub Action pinning
 
-The intended final public repository name is currently:
+The canonical public repository is:
 
 ```text
-TFourniax/diffwitness
+PaititeResearch/diffwitness
 ```
 
-Once the repository has that final identity, release examples should use the exact alpha tag:
+Release examples should use the exact alpha tag:
 
 ```yaml
-uses: TFourniax/diffwitness@v0.4.0a1
+uses: PaititeResearch/diffwitness@v0.4.0a1
 ```
 
 Security-sensitive users can pin the immutable commit SHA behind the tag. Avoid `@main` for a merge gate: a moving branch can change verification behavior without a consuming repository changing its workflow.
 
-`diffwitness init` deliberately emits a version-tagged Action reference. Therefore the repository identity used by that generator must be updated to the final public name before the first community release is tagged.
+`diffwitness init` deliberately emits a version-tagged Action reference with the canonical repository identity. The matching tag must exist before that reference resolves.
 
 ## Pull-request gate governance
 

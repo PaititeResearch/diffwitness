@@ -144,7 +144,7 @@ jobs:
           evidence='python -c "import calc; assert calc.VALUE == 2"'
           "$RUNNER_TEMP/release-consumer/bin/dw" init --repo . --test "$evidence"
 
-          expected="uses: TFourniax/tooltest@$GITHUB_REF_NAME"
+          expected="uses: PaititeResearch/diffwitness@$GITHUB_REF_NAME"
           grep -F "$expected" .github/workflows/diffwitness.yml
           test "$(grep -F -c "$expected" .github/workflows/diffwitness.yml)" -eq 1
 
@@ -152,7 +152,7 @@ jobs:
           git commit -m "consumer DiffWitness workflow"
           printf 'VALUE = 2\n' > calc.py
       - name: Exercise the released Action through the exact generated public ref
-        uses: TFourniax/tooltest@v0.4.0a1
+        uses: PaititeResearch/diffwitness@v0.4.0a1
         with:
           base: HEAD
           candidate: WORKTREE

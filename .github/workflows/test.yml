@@ -40,7 +40,7 @@ jobs:
         if: runner.os == 'Linux'
         uses: actions/checkout@v7
         with:
-          repository: TFourniax/tooltest-2
+          repository: PaititeResearch/idleproof
           ref: 2b919f7dddeaf3488091017a46f079d8c9718056
           path: idleproof-extraction-consumer
           persist-credentials: false

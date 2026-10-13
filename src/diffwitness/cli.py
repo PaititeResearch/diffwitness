@@ -159,7 +159,7 @@ def _write_init_workflow(
         "        with:",
         "          fetch-depth: 0",
         "      - name: Prove patch evidence",
-        f"        uses: TFourniax/tooltest@v{__version__}",
+        f"        uses: PaititeResearch/diffwitness@v{__version__}",
         "        with:",
         "          base: ${{ github.event.pull_request.base.sha }}",
         "          candidate: ${{ github.event.pull_request.head.sha }}",

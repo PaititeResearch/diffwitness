@@ -95,8 +95,8 @@ class ReleaseMetadataTests(unittest.TestCase):
         self.assertIn("consumer:\n    name: clean consumer · generated workflow · exact public tag", release)
         self.assertIn("needs: source", release)
         self.assertIn('"$RUNNER_TEMP/release-consumer/bin/dw" init --repo . --test "$evidence"', release)
-        self.assertIn('expected="uses: TFourniax/tooltest@$GITHUB_REF_NAME"', release)
-        self.assertIn(f"uses: TFourniax/tooltest@{exact_tag}", release)
+        self.assertIn('expected="uses: PaititeResearch/diffwitness@$GITHUB_REF_NAME"', release)
+        self.assertIn(f"uses: PaititeResearch/diffwitness@{exact_tag}", release)
         self.assertIn("needs: [source, binary, consumer]", release)
         self.assertIn("needs: [source, consumer]", release)
         self.assertGreaterEqual(

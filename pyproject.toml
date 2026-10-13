@@ -37,8 +37,8 @@ dw = "diffwitness.entry:main"
 idleproof = "diffwitness.idleproof_entry:main"
 
 [project.urls]
-Homepage = "https://github.com/TFourniax/tooltest"
-Repository = "https://github.com/TFourniax/tooltest"
+Homepage = "https://github.com/PaititeResearch/diffwitness"
+Repository = "https://github.com/PaititeResearch/diffwitness"
 
 [tool.setuptools.packages.find]
 where = ["src"]
