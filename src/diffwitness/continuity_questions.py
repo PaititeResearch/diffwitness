@@ -109,6 +109,27 @@ def _incoming_target(question):
     return target
 
 
+def _requirement_label(question):
+    """Map one requirement question form to its complete recorded directive.
+
+    This is grammatical normalization, not a bag of optional stop words.
+    Every subject/property qualifier, including negation, remains significant.
+    """
+    text = unicodedata.normalize('NFKC', question).strip()
+    match = re.fullmatch(r'why\s+(?:must|should)\s+(.+?)\s+(?:remain|stay)\s+(.+?)\s*[?!.]*',
+                         text, re.I)
+    if match is None:
+        return None
+    return 'Keep ' + match.group(1) + ' ' + match.group(2)
+
+
+def _directive_words(value):
+    # Ordered words preserve negation and subject/property placement. Ignore
+    # case, whitespace and terminal sentence punctuation only.
+    text = unicodedata.normalize('NFKC', value).casefold().strip().rstrip('?!.').strip()
+    return tuple(text.split())
+
+
 def _question_form(question):
     """Parse a supported leading form, retaining the complete entity phrase."""
     text = question.strip()
@@ -124,6 +145,9 @@ def _question_form(question):
             continue
         target = text[match.end():].strip()
         if name == 'why':
+            directive = _requirement_label(text)
+            if directive is not None:
+                return name, directive
             target = re.sub(r"^(?:do\s+we\s+(?:use|have)|are\s+we\s+using|"
                             r"utilisons[- ]nous|nous\s+utilisons|utiliser|utilise|utilisons)\s+",
                             '', target, flags=re.I)
@@ -364,9 +388,16 @@ def question_context(repo, question, *, kind='auto', since=None, until=None, ent
     events, journal_digest, validator = _read_validated_snapshot(continuity_paths(repo_root(repo)).events)
     current = validator.memory_history.current
     terms = set(query['terms'])
+    directive = _requirement_label(question) if query['kind'] == 'why' else None
     def match(subject, extra=''):
         if entity is not None and subject['id'] != entity:
             return 0
+        if directive is not None:
+            # Requirement paraphrases must match the whole positive/negative
+            # directive, not just a subset also found in a different assertion.
+            return (1000 if entity is not None else len(terms)) if (
+                _directive_words(directive) == _directive_words(subject.get('label') or '')
+            ) else 0
         subject_terms = _terms(' '.join((subject['id'], subject.get('label') or '', extra)))
         if entity is not None:
             # Identity narrows selection; it must not erase unknown qualifiers.
@@ -537,3 +568,4 @@ def question_cli(argv):
         return 2
     print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else render_answer(result), end='\n' if args.json else '')
     return 0
+

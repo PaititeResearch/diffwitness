@@ -80,3 +80,19 @@ Without `--after` the command output is unchanged.
 
 Events are returned unchanged and include local payload text. Projection and
 redaction belong to the consumer; IdleProof exports only its Portal allowlist.
+
+## Ask why a recorded requirement exists
+
+`dw ask "Why must the three numeric rules in rules.py remain independent?" --json`
+can retrieve a recorded decision labelled
+`Keep the three numeric rules in rules.py independent.` The supported grammatical
+form is `Why must/should <subject> remain/stay <property>?`, matched against the
+complete ordered `Keep <subject> <property>` label. Case, whitespace and terminal
+sentence punctuation may differ. Negation and additional qualifiers are retained;
+they cannot silently match a different requirement. This bounded normalization is
+not general semantic search. Exact IDs remain available for other wording.
+
+The answer quotes the recorded reason and preserves its source event and epistemic
+status. Missing reasons or unmatched requirements still produce abstention. Reading
+a decision does not verify its implementation, execute tests or append memories.
+
