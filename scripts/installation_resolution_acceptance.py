@@ -177,7 +177,13 @@ def main():
         exercise(root, 'pip-user', [user_dw], user_dw, 'USER', b, user_env)
         exercise(root, 'pip-user-module', [base_python, '-m', 'diffwitness.entry'], user_dw, 'USER', b, user_env)
         if args.pipx:
-            pipx_env = {**env, 'PIPX_HOME': str(root / 'pipx-home'), 'PIPX_BIN_DIR': str(root / 'pipx-bin'), 'PIPX_MAN_DIR': str(root / 'pipx-man')}
+            # This is an OFFLINE wheel-consumer test, not a test of pipx's shared-pip
+            # maintenance. Newer pipx versions may upgrade shared pip as part of install;
+            # --no-index must still apply to the wheel install itself, without requiring
+            # pipx's unrelated shared-library upgrades to reach an online package index.
+            # Keep maintenance disabled only in this disposable pipx environment.
+            pipx_env = {**env, 'PIPX_HOME': str(root / 'pipx-home'), 'PIPX_BIN_DIR': str(root / 'pipx-bin'),
+                        'PIPX_MAN_DIR': str(root / 'pipx-man'), 'PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE': '1'}
             run([sys.executable, '-m', 'pipx', 'install', '--python', base_python, '--pip-args=--no-index', str(wheel)], cwd=root, env=pipx_env)
             pipx_root = root / 'pipx-home/venvs/diffwitness'
             mark_install(launcher(pipx_root, 'python'), 'PIPX', root, pipx_env)

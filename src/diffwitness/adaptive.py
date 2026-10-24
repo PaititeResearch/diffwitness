@@ -4,7 +4,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from .analysis import AnalysisError, _apply_many, _run_variant_repeated
+from .analysis import AnalysisError, _apply_many, _run_variant_repeated, candidate_not_green
 from .diffing import FilePatch, test_overlay
 from .gitops import apply_patch, detached_worktree, git, hard_reset
 from .models import Mutation, RepeatedCommandResult
@@ -178,8 +178,9 @@ def find_adaptive_core(
             shared_paths=shared,
         )
         if not candidate_runs.passed:
-            raise AnalysisError(
-                "candidate is not stably green; adaptive causal-core search cannot start"
+            raise candidate_not_green(
+                "candidate is not stably green; adaptive causal-core search cannot start",
+                test_command, candidate_runs, source_repo=source_repo, sandbox=candidate_wt,
             )
 
         with detached_worktree(source_repo, base_sha, "adaptive-base") as base_wt:

@@ -14,7 +14,8 @@ from .models import (
     SearchSummary,
     SubsetResult,
 )
-from .runner import run_command, run_repeated, wall_clock_budgeted
+from .evidence_env import diagnose_unrunnable
+from .runner import command_env, run_command, run_repeated, wall_clock_budgeted
 
 
 class AnalysisError(RuntimeError):
@@ -37,6 +38,20 @@ def _ensure_shared(source_repo: Path, sandbox: Path, shared_paths: list[str]) ->
             target.symlink_to(source, target_is_directory=source.is_dir())
         except OSError as exc:
             raise AnalysisError(f"could not link shared path {raw}: {exc}") from exc
+
+
+def candidate_not_green(headline: str, test_command: str, runs, *, source_repo: Path, sandbox: Path) -> AnalysisError:
+    """The candidate failure, with an explicit cause when the evidence never reached the tests.
+
+    The classification is unchanged: a command that cannot start its test runner is still not green.
+    The cause line only stops it from reading as a failing assertion.
+    """
+    message = f"{headline}\nclassification: {runs.classification}"
+    try:
+        diagnosis = diagnose_unrunnable(test_command, runs.runs, env=command_env(source_repo, cwd=sandbox))
+    except (OSError, ValueError):
+        diagnosis = None
+    return AnalysisError(f"{message}\n{diagnosis}" if diagnosis else message)
 
 
 def _prepare_sandbox(
@@ -160,9 +175,9 @@ def run_analysis(
             shared_paths=shared_paths,
         )
         if not candidate_runs.passed:
-            raise AnalysisError(
-                "candidate is not stably green under the selected test command; hunk evidence cannot be interpreted\n"
-                f"classification: {candidate_runs.classification}"
+            raise candidate_not_green(
+                "candidate is not stably green under the selected test command; hunk evidence cannot be interpreted",
+                test_command, candidate_runs, source_repo=source_repo, sandbox=candidate_wt,
             )
 
         with detached_worktree(source_repo, base_sha, "base") as base_wt:

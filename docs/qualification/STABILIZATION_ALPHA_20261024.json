@@ -1,0 +1,349 @@
+{
+  "schema": "diffwitness.alpha-stabilization-manifest.v1",
+  "date": "2026-10-24",
+  "registry": "PaititeResearch/diffwitness#74",
+  "dossier": "docs/qualification/STABILIZATION_ALPHA_20261024.md",
+  "humanRecipe": "docs/qualification/STABILIZATION_ALPHA_HUMAN_RECIPE_20261024.md",
+  "status": {
+    "machine": "Core MACHINE PASS (machine qualification head e289c91; branch head dadf874 docs-only, 27/27); IdleProof d3b9ed5 32/32 and Portal 5c4b98c 12/12 hosted CI green",
+    "human": "NOT RUN",
+    "decision": "MACHINE PASS + MANIFEST REVIEW COMPLETE / HUMAN NOT RUN / NOT ALPHA READY; preserved local pilot data may be reused with non-destructive preflight",
+    "readyForHumanAcceptanceRequires": [
+      "Before the human trial, confirm exact candidate SHAs and full CI",
+      "Verify the existing WSL/Portal/IdleProof data are present and the current Portal ownership and database schema are compatible before reusing the stack; do not reset, clean or overwrite existing state",
+      "Obtain explicit operator go-ahead before stopping a live Portal instance or rebooting Windows. Backups are optional for this pilot but their absence means recovery from accidental data loss is not guaranteed"
+    ],
+    "merged": false,
+    "released": false,
+    "alphaReady": false,
+    "ownerReview": {
+      "date": "2026-10-24",
+      "record": "PaititeResearch/diffwitness#74 comment 6383703423",
+      "verdict": "manifest and inter-product contracts consistent with the code heads; no blocking divergence for entering the human recipe",
+      "reserve": "Manifest and contracts reviewed on shipped code heads. Current local SQL/WSL/IdleProof data are presumed retained because no destructive operations were requested, but must be inspected read-only before reuse. No backup exists; a lost state cannot be recovered from GitHub snapshots."
+    },
+    "backupPolicy": {
+      "ownerDecisionDate": "2026-10-24",
+      "portalSqlBackupCreated": false,
+      "idleproofStateArchiveCreated": false,
+      "wslExportCreated": false,
+      "preserveExistingData": true,
+      "noResetAuthorized": true,
+      "policy": "The owner did not run snapshot scripts, and explicitly wants to REUSE current WSL, Portal SQL and IdleProof state, not declare those data disposable. No heavy WSL backup is required solely to begin a non-destructive human recipe. All existing data must be kept. If the test cannot be conducted without destructive or schema-incompatible operations, stop and request approval or isolate it.",
+      "existingDataState": "NOT VERIFIED ON THE OPERATOR MACHINE; only the operator can verify locally",
+      "risk": "There is NO known restorable local backup for SQL/IdleProof/WSL, so a future corruption or deletion cannot be undone using GitHub code refs.",
+      "githubCodeRefs": "8 snapshots/alpha-20261024-before-claude/* GitHub refs pin code history only, not state, SQL, WSL or secrets."
+    }
+  },
+  "branch": "claude/diffwitness-idleproof-alpha-d0lv1f",
+  "products": [
+    {
+      "product": "core",
+      "repository": "PaititeResearch/diffwitness",
+      "base": {
+        "pr": "PaititeResearch/diffwitness#133",
+        "commit": "0933d5caebc087b4f2321e283879dd2a83d54d17"
+      },
+      "codeHead": "8ee8ee29a5fcc0557b968d9033485251ad80a8e2",
+      "draftPr": "PaititeResearch/diffwitness#137",
+      "packageVersion": "diffwitness 0.4.0a1 (unchanged)",
+      "commits": [
+        {
+          "commit": "ec01078",
+          "lot": "L2",
+          "issue": "PaititeResearch/diffwitness#136"
+        },
+        {
+          "commit": "8ee8ee2",
+          "lot": "L2",
+          "issue": "PaititeResearch/diffwitness#136"
+        },
+        {
+          "commit": "8d7ae4d",
+          "lot": "L2",
+          "issue": "PaititeResearch/diffwitness#136",
+          "scope": "tests only"
+        },
+        {
+          "commit": "e289c91",
+          "lot": "CI",
+          "issue": "PaititeResearch/diffwitness#138",
+          "scope": "scripts/installation_resolution_acceptance.py only (cherry-pick -x of 92994a4)"
+        },
+        {
+          "commit": "dadf874",
+          "lot": "docs",
+          "issue": "PaititeResearch/diffwitness#74",
+          "scope": "qualification docs only"
+        }
+      ],
+      "artifactDigest": {
+        "wheel": "rebuilt per machine; record on the human sheet",
+        "localDryRunSha256": "fea65422bfeb7f78186ced460b35d0249055048731d452a025f6bc4dc6ae03a0"
+      },
+      "note": "codeHead is the last commit changing shipped code; later commits on the branch change only tests and docs (git diff --stat 8ee8ee2 HEAD -- src is empty)",
+      "machineStatus": {
+        "verdict": "MACHINE PASS",
+        "head": "e289c915565096807c76104a05b06e0e05b608d0",
+        "ci": "27/27 green (test run 40085568577 24/24, proofbench, continuitybench, integrated-product-smoke)"
+      },
+      "lastVerifiedBranchHead": {
+        "commit": "dadf874bd87f063cdbee1b764c7b993763dcf661",
+        "scope": "docs only after e289c91 (3 files under docs/qualification)",
+        "ci": "27/27 green (test run 40087320497, proofbench 40087320490, continuitybench 40087320492, integrated-product-smoke 40087320528)"
+      },
+      "branchHeadPolicy": "machineStatus.head is the last commit changing code, tests or CI scripts and carries the MACHINE PASS; lastVerifiedBranchHead is the newest branch head whose CI is recorded here; a commit cannot name itself, so later docs-only heads and their CI are recorded in the journal and on PaititeResearch/diffwitness#74"
+    },
+    {
+      "product": "idleproof-local",
+      "repository": "PaititeResearch/idleproof",
+      "base": {
+        "pr": "PaititeResearch/idleproof#54",
+        "commit": "7c8ffee00273fd153c7d4490ba238dff61222e15"
+      },
+      "codeHead": "cd59df2c6d4b9e74c5ae6224079e1db8b443e088",
+      "draftPr": "PaititeResearch/idleproof#55",
+      "packageVersion": "idleproof 0.10.0 (unchanged)",
+      "commits": [
+        {
+          "commit": "5946dfb",
+          "lot": "L1",
+          "issue": "PaititeResearch/idleproof#53"
+        },
+        {
+          "commit": "cc77f35",
+          "lot": "L1",
+          "issue": "PaititeResearch/idleproof#53"
+        },
+        {
+          "commit": "bc1e085",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29"
+        },
+        {
+          "commit": "a805bdd",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29"
+        },
+        {
+          "commit": "53715cf",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29"
+        },
+        {
+          "commit": "cd59df2",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29"
+        },
+        {
+          "commit": "d3b9ed5",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29",
+          "scope": "CI smoke scripts only"
+        }
+      ],
+      "artifactDigest": {
+        "npmPackSha256": "eca434f137e89dc9333205422588a413470eebfcf15acae67190d1e7940fdeda",
+        "producedWith": "Node 22.22.0, npm 10.9.4"
+      },
+      "note": "codeHead is the last commit changing shipped code; d3b9ed5 changes only scripts/ (not in the npm package)"
+    },
+    {
+      "product": "portal",
+      "repository": "PaititeResearch/idleproof-portal",
+      "base": {
+        "pr": "PaititeResearch/idleproof-portal#50",
+        "commit": "198215fb8a2dcc16d6f381fba13603821306b8f6"
+      },
+      "codeHead": "5c4b98ccfb21b4ba1929f94ab4bd7a4eb4a7e548",
+      "draftPr": "PaititeResearch/idleproof-portal#56",
+      "packageVersion": "0.1.0-alpha.1 (unchanged)",
+      "commits": [
+        {
+          "commit": "fcb6226",
+          "lot": "L4",
+          "issue": "PaititeResearch/idleproof-portal#55"
+        },
+        {
+          "commit": "43b3ccf",
+          "lot": "L5",
+          "issue": "PaititeResearch/idleproof-portal#48"
+        },
+        {
+          "commit": "48a5490",
+          "lot": "L6",
+          "issue": "PaititeResearch/idleproof-portal#46"
+        },
+        {
+          "commit": "1021857",
+          "lot": "L2",
+          "issue": "PaititeResearch/diffwitness#136"
+        },
+        {
+          "commit": "06ec369",
+          "lot": "CI",
+          "issue": null
+        },
+        {
+          "commit": "87d92ef",
+          "lot": "CI",
+          "issue": null
+        },
+        {
+          "commit": "5c4b98c",
+          "lot": "L4",
+          "issue": "PaititeResearch/idleproof-portal#55"
+        }
+      ],
+      "migrations": [],
+      "ciProducerPins": {
+        "core": "8ee8ee29a5fcc0557b968d9033485251ad80a8e2",
+        "idleproof": "cd59df2c6d4b9e74c5ae6224079e1db8b443e088",
+        "legacyPins": "unchanged"
+      }
+    }
+  ],
+  "contracts": {
+    "unchanged": [
+      "change-envelope-1",
+      "dwchg_ change identity",
+      "idleproof.portal-snapshot.v1",
+      "native Stop hook output fields"
+    ],
+    "newOptionalConfiguration": [
+      "[diffwitness] python_env",
+      "DIFFWITNESS_PYTHON_ENV"
+    ],
+    "migrations": "none in any product"
+  },
+  "untouched": [
+    "main of every repository",
+    "candidate branches of #133, #37, #52, #54, #50",
+    "snapshots/alpha-20261024-before-claude/*",
+    "human recipe data"
+  ],
+  "localResults": {
+    "coreUnittest": "888 tests OK, 53 skipped (262 s) on 8ee8ee2",
+    "coreLint": "ruff F821/F822/F823 and compileall OK",
+    "proofBench": "4/4, classifications identical to baseline",
+    "continuityBench10k": "PASS",
+    "idleproofNpmTest": "924 tests: 916 pass, 0 fail, 8 skipped on cd59df2",
+    "explainBench": "30/30 exact paths, 2 safe fallbacks",
+    "idleproofPerf": "PASS x3 on cd59df2: hook p95 10.6-11.8 ms, Stop 73.6-75.8 ms (budgets 150 / 750 ms)",
+    "portal": "ci:app on 5c4b98c: build, typecheck, vitest 446/446, architecture/deployment/migration/dependency gates, bundle budget",
+    "recipeDryRun": "S1, S2 and S2.7 through the exact installed hooks (dw setup --idleproof-command): accepted causal and bound in Local with the same dwchg_; refusal stable-fail; reverted tree no-change; missing runner explained",
+    "coreSourceDistributionSmoke": "sdist smoke on 8d7ae4d: 888 tests OK, 53 skipped (on 8ee8ee2: 3 test_status_cli failures, fixed by 8d7ae4d)",
+    "idleproofContextConsumerReplay": "real Core context consumer job replayed locally with and without grammars: base 12/12, cd59df2 9/12, d3b9ed5 12/12"
+  },
+  "hostedCi": {
+    "core": {
+      "head": "e289c91",
+      "runs": {
+        "test": 40085568577
+      },
+      "green": 27,
+      "red": 0,
+      "note": "journeys x3 incl. pipx and the five later steps green on Linux, macOS, Windows"
+    },
+    "idleproof": {
+      "head": "d3b9ed5",
+      "run": 40054713702,
+      "result": "all green (test, Atlas, Deep, project-understanding)"
+    },
+    "portal": {
+      "head": "5c4b98c",
+      "run": 40054815816,
+      "result": "all green prealpha-pr-gates incl. real-stack recipe, launcher L1-L6, auto-debt, G1-G12",
+      "producerPins": {
+        "core": "8ee8ee2",
+        "idleproof": "cd59df2"
+      }
+    },
+    "coreBranchHeads": [
+      {
+        "head": "e289c91",
+        "runs": {
+          "test": 40085568577
+        },
+        "green": 27,
+        "red": 0,
+        "kind": "machine qualification head"
+      },
+      {
+        "head": "dadf874",
+        "runs": {
+          "test": 40087320497,
+          "proofbench": 40087320490,
+          "continuitybench": 40087320492,
+          "integratedProductSmoke": 40087320528
+        },
+        "green": 27,
+        "red": 0,
+        "kind": "docs only"
+      }
+    ]
+  },
+  "humanRequired": [
+    "S1",
+    "S2",
+    "C2 Atlas",
+    "C3 stop/start",
+    "C4 two real Windows reboots"
+  ],
+  "knownResiduals": [
+    "PaititeResearch/idleproof#30 source=manual vs ide provenance (not in scope)",
+    "host-side trigger of H12 (root-owned staging directory) not established",
+    "hosted Windows/macOS behaviour of the evidence environment until CI reports",
+    "dw setup without --idleproof-command arms the idleproof entry point bundled in the Core wheel; IdleProof Local then sees no session",
+    "pipx: fixed in the qualification script only (PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1 in the disposable pipx env); pipx shared-library maintenance is not representative of product installs and is not exercised offline",
+    "Portal prealpha-pr-gates.yml still checks out the producers as TFourniax/tooltest and TFourniax/tooltest-2 (pre-transfer names, served by redirect); documentation/distribution debt to clear before a public release",
+    "No restorable Portal SQL, IdleProof state or WSL snapshot was made (operator confirms scripts never run). This is a known recovery risk, NOT authorization to discard or recreate existing data. Local references remain untouched by the GitHub work."
+  ],
+  "regressionsFoundByCiAndFixed": [
+    {
+      "product": "core",
+      "commit": "8d7ae4d",
+      "what": "3 test_status_cli fixtures assumed pytest in the suite interpreter"
+    },
+    {
+      "product": "idleproof",
+      "commit": "d3b9ed5",
+      "what": "3 CI smokes expected the first-declaration fallback removed by #29"
+    },
+    {
+      "product": "portal",
+      "commit": "5c4b98c",
+      "what": "Guided folded each change's receipts, hiding file and per-receipt debt"
+    }
+  ],
+  "consolidationCheck": {
+    "shippedCodeIdentity": {
+      "core": "git diff 8ee8ee2 e289c91 -- src pyproject.toml: empty",
+      "idleproof": "git diff cd59df2 d3b9ed5 -- src bin public package.json: empty"
+    },
+    "portalProducerPins": {
+      "core8ee8ee2": 5,
+      "idleproofcd59df2": 5,
+      "gatesRun": 40054815816,
+      "result": "green"
+    },
+    "migrations": "none vs Portal base 198215f and vs Portal main",
+    "contracts": {
+      "change-envelope-1": {
+        "core": "8->8",
+        "idleproof": "3->5 (readers)"
+      },
+      "idleproof.portal-snapshot.v1": "1/1/3 -> 1/1/3",
+      "diffwitness.integration-config.v1": "1/1 -> 1/1",
+      "dwchg_": {
+        "core": "10->10",
+        "idleproof": "16->17",
+        "portal": "28->36 (exact-id consumers)"
+      },
+      "producerWritersChanged": false,
+      "portalIngestFunctionChanged": false,
+      "snapshotChange": "text of the bounded summary field only"
+    },
+    "verdict": "consistent (machine); owner review complete; preserved local pilot may be reused only after read-only inventory and non-destructive compatibility preflight"
+  }
+}

@@ -11,6 +11,7 @@ from typing import Any
 
 from .autodetect import command_available, default_evidence, suggested_available_command
 from .config import load_config
+from .evidence_env import describe as describe_python_environment
 from .gitops import git_metadata_path, repository_state
 from .native_activation import SUPPORTED_NATIVE_PROVIDERS, native_activation_summary
 
@@ -35,8 +36,12 @@ def verification_readiness(repo: Path, config: dict | None = None) -> dict[str, 
     command = command.strip() if configured else plan.command if plan else None
     ready = bool(command and command_available(command, cwd=repo))
     reason = ('configured project evidence' if configured else plan.reason if plan else 'no safe evidence command detected')
+    python_environment = describe_python_environment(repo, command)
     if command and not ready:
         reason = 'selected command executable is unavailable'
+    elif ready and python_environment.get('problem'):
+        ready = False
+        reason = str(python_environment['problem'])
     return {
         'configured': configured, 'selected': bool(command), 'executableReady': ready,
         'ready': ready, 'checksRun': False,
@@ -44,6 +49,7 @@ def verification_readiness(repo: Path, config: dict | None = None) -> dict[str, 
         'command': command, 'reason': reason,
         'problem': None if ready else reason,
         'suggestion': suggested_available_command(command) if command and not ready else None,
+        'pythonEnvironment': python_environment,
         **({'confidence': plan.confidence} if plan else {}),
     }
 

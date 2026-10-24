@@ -75,6 +75,26 @@ def _native_lines(native: dict[str, Any], *, guided: bool) -> list[str]:
     return native_human_lines(native, guided=guided)
 
 
+def _python_environment_lines(state: dict[str, Any] | None, *, guided: bool) -> list[str]:
+    """Which Python the evidence command runs with (issue #136). Static: nothing is executed."""
+    if not isinstance(state, dict):
+        return []
+    problem = state.get("problem")
+    if guided:
+        return [tr(f"  Python environment: {problem}", f"  Environnement Python : {problem}")] if problem else []
+    source = state.get("source")
+    where = state.get("root") or state.get("interpreter") or "not found"
+    lines = [tr(f"Python env: {source} · {where}", f"Env. Python : {source} · {where}")]
+    if state.get("editableRoots"):
+        lines.append(tr(
+            f"  editable source roots mapped into each proof worktree: {', '.join(state['editableRoots'])}",
+            f"  racines éditables redirigées dans chaque worktree de preuve : {', '.join(state['editableRoots'])}",
+        ))
+    if problem:
+        lines.append(tr(f"  PROBLEM: {problem}", f"  PROBLÈME : {problem}"))
+    return lines
+
+
 def _render_guided(
     repo: Path,
     *,
@@ -128,8 +148,10 @@ def _render_guided(
         if evidence.get("suggestion"):
             print(tr(f"  Command available on this machine: {evidence['suggestion']}", f"  Commande disponible sur cette machine : {evidence['suggestion']}"))
             print(tr('  DiffWitness does not change your configuration automatically.', "  DiffWitness ne modifie pas ta configuration automatiquement."))
-        else:
+        elif not (evidence.get("pythonEnvironment") or {}).get("problem"):
             print(tr('  Add/configure an executable test command before running verification.', "  Ajoute/configure une commande de test exécutable avant de considérer le projet prêt."))
+    for line in _python_environment_lines(evidence.get("pythonEnvironment"), guided=True):
+        print(line)
 
     if setup_scope:
         print(tr('✓ Agent integration configured: ', "✓ Intégration agent configurée : ") + ", ".join(names.get(item, item) for item in setup_scope))
@@ -226,6 +248,8 @@ def _render_technical(
             print(tr(f"Candidate:  {evidence['command']}", f"Candidate :    {evidence['command']}"))
         if evidence.get("suggestion"):
             print(tr(f"Repair:     {evidence['suggestion']} (suggestion only; config unchanged)", f"Réparation :  {evidence['suggestion']} (suggestion ; configuration inchangée)"))
+    for line in _python_environment_lines(evidence.get("pythonEnvironment"), guided=False):
+        print(line)
     print(tr(f"Native:     {', '.join(setup_scope) if setup_scope else 'not configured'}", f"Intégration : {', '.join(setup_scope) if setup_scope else 'non configurée'}"))
     for line in _native_lines(native, guided=False):
         print(line)

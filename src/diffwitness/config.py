@@ -18,6 +18,7 @@ KNOWN_KEYS = {
     "test", "prepare", "timeout", "max_total_seconds", "stability_runs", "sufficient_search", "max_subset_order",
     "max_subset_runs", "interaction_search", "max_interaction_runs", "test_glob", "ignore", "share",
     "test_overlay", "policy", "strategy", "adaptive_threshold", "adaptive_budget", "debt", "engine",
+    "python_env",
 }
 DEBT_KEYS = {
     "ledger", "max_total", "max_per_change", "category_limits", "duplicate_scan", "max_scan_files",
@@ -145,9 +146,11 @@ def validate_config(section: dict[str, Any]) -> dict[str, Any]:
     unknown = sorted(set(section) - KNOWN_KEYS)
     if unknown:
         raise ValueError("Unknown DiffWitness config key(s): " + ", ".join(unknown) + ". Failing rather than silently changing proof semantics.")
-    for key in ("test", "prepare"):
+    for key in ("test", "prepare", "python_env"):
         if key in section and section[key] is not None and not isinstance(section[key], str):
             raise ValueError(f"DiffWitness config `{key}` must be a string")
+    if "python_env" in section and isinstance(section["python_env"], str) and not section["python_env"].strip():
+        raise ValueError('DiffWitness config `python_env` cannot be empty; omit it or use "inherit"')
     if "test" in section and isinstance(section["test"], str) and not section["test"].strip():
         raise ValueError("DiffWitness config `test` cannot be empty")
     for key in ("timeout", "max_total_seconds"):

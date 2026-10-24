@@ -4,6 +4,8 @@ import contextlib
 import io
 import json
 import subprocess
+import sys
+import sysconfig
 import tempfile
 import unittest
 from pathlib import Path
@@ -32,6 +34,13 @@ class ProjectStatusTests(unittest.TestCase):
             "from app import answer\n\ndef test_answer():\n    assert answer() == 42\n",
             encoding="utf-8",
         )
+        # The project's own environment provides its test runner (issue #136), so the status does
+        # not depend on whether the interpreter running this suite happens to have pytest.
+        (root / ".gitignore").write_text(".venv/\n", encoding="utf-8")
+        venv = root / ".venv"
+        subprocess.run([sys.executable, "-m", "venv", "--without-pip", str(venv)], check=True)
+        site = sysconfig.get_path("purelib", scheme="venv", vars={"base": str(venv), "platbase": str(venv)})
+        (Path(site) / "pytest").mkdir(parents=True)
         _git(root, "add", ".")
         _git(root, "commit", "-m", "initial")
         return root

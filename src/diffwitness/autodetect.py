@@ -53,7 +53,16 @@ def command_executable(command: str, *, cwd: Path | None = None) -> str | None:
         if os.name != "nt" and not os.access(resolved, os.X_OK):
             return None
         return str(resolved)
-    return shutil.which(executable)
+    path = None
+    if cwd is not None:
+        # The PATH evidence runs with (project environment, node_modules/.bin), not this process's.
+        from .runner import command_env
+
+        try:
+            path = command_env(Path(cwd), cwd=Path(cwd)).get("PATH")
+        except (OSError, ValueError):
+            path = None
+    return shutil.which(executable, path=path)
 
 
 def command_available(command: str, *, cwd: Path | None = None) -> bool:
