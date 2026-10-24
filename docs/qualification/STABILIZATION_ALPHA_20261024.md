@@ -346,3 +346,64 @@ green on the exact heads; **ALPHA READY** requires the operator's human acceptan
   only remaining red check — the Core pipx tooling step, outside this candidate — is fixed (one line,
   verified locally) or explicitly waived by the owner, and the Core CI is re-run. **HUMAN NOT RUN.** Not
   merged, not released, **not ALPHA READY**.
+- 2026-10-24 — **owner decision on the pipx step** (comment on PaititeResearch/diffwitness#137): neither a
+  lasting red exception nor a `pipx<1.18` pin. Classification: orchestration problem of the offline
+  consumer scenario (pipx 1.18.4 upgrades its shared pip to `pip>=26.1` under `--no-index`), **not a
+  demonstrated Core regression**. Fix authored by the owner in draft PaititeResearch/diffwitness#138
+  (`92994a4`): `PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1` in the disposable `pipx_env` of
+  `scripts/installation_resolution_acceptance.py` only; `--no-index`, the real wheel install, the
+  executable and hook checks unchanged; no `continue-on-error`, no skip. This supersedes the `pipx<1.18`
+  alternative proposed in the 2026-10-24 entry above. #138 CI on `92994a4`: 27/27 green, including the
+  three journeys jobs and, for the first time on macOS and Windows, the five steps after pipx.
+- 2026-10-24 — **integration into the Core candidate (owner's go-ahead).** Verified before the operation:
+  #137 head `24cd6d51e7bfa665ea9f326096a9283ea123de60` (local = remote); `92994a4d87b6df61e988f9da6a53142a9059ad67`
+  has parent `24cd6d5` and touches only `scripts/installation_resolution_acceptance.py`. Cherry-picked
+  with `-x` → `e289c915565096807c76104a05b06e0e05b608d0` (author kept; tree byte-identical to `92994a4`;
+  diff vs `24cd6d5`: that one file, +7/−1); fast-forward push. Backup and reference refs recorded before
+  and checked unchanged after: `snapshots/alpha-20261024-before-claude/*` (Core `main`/`pr133`,
+  IdleProof `main`/`pr37`/`pr52-atlas`/`pr54-stabilization`, Portal `main`/`pr50`), the three `main`
+  (`61dbf48`, `7725057`, `459cb7b`) and the historical candidate branches. Nothing merged, no release.
+- 2026-10-24 — **hosted CI on `e289c91`:** **27/27 green** — `test` run 40085568577: 24/24 (12 `test` jobs Linux/macOS/Windows × Python 3.11–3.14, release package preflight, standalone binaries ×3, optional syntax providers ×3, composite Action, fatal static checks, installed wheel commercial-alpha journeys ×3), plus `proofbench` (causal semantics benchmark), `continuitybench` and `integrated-product-smoke` (Native Understand → Prove → Owe → Continuity). In each of the three journeys jobs the pipx step and the five later steps (Guard + Debt + change envelope, private engine + adaptive Gate, human acceptance journeys, IdleProof release boundaries, fail-closed recovery) pass on Linux, macOS and Windows. Refs re-read after the push: only `claude/diffwitness-idleproof-alpha-d0lv1f` moved (`24cd6d5` → `e289c91`).
+- 2026-10-24 — **consolidated manifest and inter-product contracts (machine check on the exact heads).**
+  Heads: Core `e289c91` (shipped code `8ee8ee2`; later commits change tests, CI scripts and docs only),
+  IdleProof `d3b9ed5` (shipped code `cd59df2`), Portal `5c4b98c`. `git diff 8ee8ee2 e289c91 -- src
+  pyproject.toml` and `git diff cd59df2 d3b9ed5 -- src bin public package.json` are empty. The ten
+  producer pins of Portal `prealpha-pr-gates` are exactly those shipped-code commits (5 × Core `8ee8ee2`,
+  5 × IdleProof `cd59df2`); their run 40054815816 on `5c4b98c` is fully green. Migrations: none versus
+  the Portal base `198215f` and versus Portal `main`. Contracts: on the producer side no envelope,
+  snapshot or integration-config writer changed (Core diff limited to the evidence environment,
+  analysis/readiness/doctor/config/autodetect/runner; Portal `supabase/functions` unchanged); identifier
+  occurrences at base → head: `change-envelope-1` Core 8 → 8, IdleProof 3 → 5 (new readers);
+  `idleproof.portal-snapshot.v1` 1/1/3 → 1/1/3; `diffwitness.integration-config.v1` 1/1 → 1/1;
+  `dwchg_` Core 10 → 10, IdleProof 16 → 17, Portal 28 → 36 (new exact-id consumers). In
+  `portal-snapshot.mjs` only the text of the bounded summary field changes ("Adds"/"Changes" from Git
+  evidence; same key, same 300-character bound). Identical `dwchg_` in Local and in the Core envelope was
+  shown on the shipped-code artefacts (recipe dry run). **Machine verdict: consistent.** The owner's
+  review of this manifest is still required.
+- 2026-10-24 — **status:** Core lot **MACHINE PASS** on `e289c915565096807c76104a05b06e0e05b608d0` (owner's criterion: CI entirely green). Global candidate **NOT ALPHA READY**; not yet
+  READY FOR HUMAN ALPHA ACCEPTANCE — owner's conditions: review of the consolidated manifest Core +
+  Local + Portal, of the inter-product contracts, and confirmation of the local WSL/Portal backup (recipe
+  §0.2b). No human recipe and no migration on the reference installation before that backup is
+  confirmed. Recipe updated: backup gate §0.2b (read-only checks, repeated before C4).
+- 2026-10-24 — **what remains to qualify (at this entry).**
+  1. *Owner gates before READY FOR HUMAN ALPHA ACCEPTANCE:* review of the consolidated manifest
+     (`STABILIZATION_ALPHA_20261024.json`, `consolidationCheck`) and of the contracts above; confirmation of
+     the local backup (recipe §0.2b: Portal data backup of today, `idleproof-portal-alpha-backup/1` header,
+     data rows present; local producer state archived; previous tools recorded; WSL export before C4).
+  2. *Human recipe, never run on this candidate:* S1 (Codex/Claude on WSL, **no `PATH` prefix**, Proof
+     accepted, explanation of the real change, debt, continuity, Portal Guided/Technical, DEC-S1 DECLARED,
+     persistence), S2 (refusal everywhere, recovery, history kept, optional missing-runner cause), C2
+     (Atlas note persists, no paid call; `public/app.js` changed), C3 (stop/start, no orphan), C4 (two
+     real Windows reboots, Portal running then stopped, no sudo, no manual repair). HUMAN PASS only if every
+     non-optional row passes.
+  3. *Not covered by any machine evidence:* WSL itself (CI is Linux/macOS/Windows-native; the real Supabase
+     stack runs on Linux CI only); provider hook trust and real Codex/Claude processes; the host-side
+     trigger of H12 (L6 recovery proven on the Linux real-stack launcher job L1–L6 and by the faithful
+     reproduction only); the `PATH` reordering under Codex for #136 (inferred); the visual reading of the
+     Guided/Technical timeline and of the Local Native Proof labels.
+  4. *Known residuals outside the candidate:* PaititeResearch/idleproof#30 (`source=manual` vs `ide`);
+     `dw setup` without `--idleproof-command` arms the `idleproof` script bundled in the Core wheel
+     (documented, product decision pending); PaititeResearch/diffwitness#138 is now contained in #137
+     (`e289c91`, same tree) and can be closed by its author.
+  5. *After HUMAN PASS only:* merge plan of the three drafts onto their bases, then towards `main`, and a
+     release with recorded artefact digests — each needs the owner's explicit approval.

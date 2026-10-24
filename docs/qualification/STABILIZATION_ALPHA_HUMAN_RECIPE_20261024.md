@@ -44,6 +44,22 @@ scripts/alpha-local.sh stop
 The candidate Portal adds **no migration** (same schema as Portal `main`), so this backup stays
 restorable with the candidate and with the previous version.
 
+**0.2b Backup gate — confirm before §0.3, and again before C4.** Nothing below starts until every line
+is confirmed and written on the sheet. All checks are read-only; never test `restore` on the reference
+installation.
+
+| Check | Command (WSL) | Expected |
+|---|---|---|
+| Portal data backup exists, private, non-empty | `ls -l ~/alpha/backups/` | the `.backup` file of today, mode `-rw-------`, size > 0, message `Backup written: … bytes, …` seen |
+| It is a launcher backup of the current schema | `head -n 1 ~/alpha/backups/portal-before-stab-*.backup` | one line starting with `-- idleproof-portal-alpha-backup/1` followed by the schema version (the line `restore` checks) |
+| It holds data rows | `grep -c '^COPY ' ~/alpha/backups/portal-before-stab-*.backup` | a non-zero count |
+| Local producer state of the real test repository | `tar czf ~/alpha/backups/<repo>-local-state-$(date +%F).tgz -C <repo> .idleproof .git/diffwitness && tar tzf ~/alpha/backups/<repo>-local-state-*.tgz \| head` | archive listed, no error |
+| Previous tools recorded | the §0.1 output | written on the sheet |
+| (Recommended before C4) whole distribution | PowerShell: `wsl --shutdown` then `wsl --export Ubuntu-24.04 <disk>\backups\ubuntu-pre-stab.tar` | file present; with Docker Desktop the Docker volumes live outside this export, the Portal data backup above is what covers them |
+
+A backup is restorable only into a stack at the same schema version (§8 of the first-use guide,
+including the mandatory producer step after a restore).
+
 **0.3 Install the candidate in an isolated directory** (the current `dw` / `idleproof` stay installed):
 
 ```bash
@@ -154,7 +170,7 @@ timeline, debt and DEC-S1 are intact.
 
 ## C4. Real Windows reboots (×2, ≈15 min + reboots)
 
-Precondition: the backup of §0.2 exists, and take a fresh one now:
+Precondition: the §0.2b gate is confirmed again, and take a fresh one now:
 `scripts/alpha-local.sh backup ~/alpha/backups/portal-before-reboot-$(date +%F).backup`.
 
 1. Leave Portal **running**. Restart Windows (Start → Restart; not `wsl --shutdown`).
@@ -173,6 +189,7 @@ Precondition: the backup of §0.2 exists, and take a fresh one now:
 
 | Item | PASS / FAIL / PARTIAL / NOT RUN | Observed (ids, messages) |
 |---|---|---|
+| 0.2b backup gate confirmed (Portal data, local state, tools; WSL export before C4) | | |
 | 0.3 digests (wheel, tarball) | | |
 | 1 doctor Python env line | | |
 | S1.3 Stop accepted, certificate | | |

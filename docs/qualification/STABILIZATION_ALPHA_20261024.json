@@ -5,9 +5,14 @@
   "dossier": "docs/qualification/STABILIZATION_ALPHA_20261024.md",
   "humanRecipe": "docs/qualification/STABILIZATION_ALPHA_HUMAN_RECIPE_20261024.md",
   "status": {
-    "machine": "local suites green on the heads below; hosted CI recorded in the dossier journal",
+    "machine": "Core MACHINE PASS (e289c91); IdleProof d3b9ed5 and Portal 5c4b98c hosted CI fully green",
     "human": "NOT RUN",
-    "decision": "PARTIAL (READY FOR HUMAN ALPHA ACCEPTANCE once the out-of-scope pipx CI step is fixed or waived and Core CI re-run)",
+    "decision": "NOT ALPHA READY; not yet READY FOR HUMAN ALPHA ACCEPTANCE",
+    "readyForHumanAcceptanceRequires": [
+      "owner review of the consolidated manifest Core + Local + Portal",
+      "owner review of the inter-product contracts (machine check: consistent)",
+      "confirmed local WSL/Portal backup (recipe 0.2b)"
+    ],
     "merged": false,
     "released": false,
     "alphaReady": false
@@ -40,13 +45,24 @@
           "lot": "L2",
           "issue": "PaititeResearch/diffwitness#136",
           "scope": "tests only"
+        },
+        {
+          "commit": "e289c91",
+          "lot": "CI",
+          "issue": "PaititeResearch/diffwitness#138",
+          "scope": "scripts/installation_resolution_acceptance.py only (cherry-pick -x of 92994a4)"
         }
       ],
       "artifactDigest": {
         "wheel": "rebuilt per machine; record on the human sheet",
         "localDryRunSha256": "fea65422bfeb7f78186ced460b35d0249055048731d452a025f6bc4dc6ae03a0"
       },
-      "note": "codeHead is the last commit changing shipped code; later commits on the branch change only tests and docs (git diff --stat 8ee8ee2 HEAD -- src is empty)"
+      "note": "codeHead is the last commit changing shipped code; later commits on the branch change only tests and docs (git diff --stat 8ee8ee2 HEAD -- src is empty)",
+      "machineStatus": {
+        "verdict": "MACHINE PASS",
+        "head": "e289c915565096807c76104a05b06e0e05b608d0",
+        "ci": "27/27 green (test run 40085568577 24/24, proofbench, continuitybench, integrated-product-smoke)"
+      }
     },
     {
       "product": "idleproof-local",
@@ -191,16 +207,13 @@
   },
   "hostedCi": {
     "core": {
-      "head": "3f33162",
-      "run": 40054367942,
-      "green": 21,
-      "red": 3,
-      "red_jobs": "installed wheel commercial-alpha journeys x3 (pipx step, outside the candidate, identical on base)",
-      "also_green": [
-        "proofbench",
-        "continuitybench",
-        "integrated-product-smoke"
-      ]
+      "head": "e289c91",
+      "runs": {
+        "test": 40085568577
+      },
+      "green": 27,
+      "red": 0,
+      "note": "journeys x3 incl. pipx and the five later steps green on Linux, macOS, Windows"
     },
     "idleproof": {
       "head": "d3b9ed5",
@@ -215,10 +228,7 @@
         "core": "8ee8ee2",
         "idleproof": "cd59df2"
       }
-    },
-    "notCountedAsPassed": [
-      "Core journeys steps after pipx on macOS/Windows (not run)"
-    ]
+    }
   },
   "humanRequired": [
     "S1",
@@ -232,7 +242,7 @@
     "host-side trigger of H12 (root-owned staging directory) not established",
     "hosted Windows/macOS behaviour of the evidence environment until CI reports",
     "dw setup without --idleproof-command arms the idleproof entry point bundled in the Core wheel; IdleProof Local then sees no session",
-    "Core CI 'installed wheel commercial-alpha journeys' (all OS) red because pipx>=1.18 requires pip>=26.1 with --no-index; workflow unchanged vs base; proposed fix: pin pipx<1.18 (not applied)"
+    "pipx: fixed in the qualification script only (PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1 in the disposable pipx env); pipx shared-library maintenance is not representative of product installs and is not exercised offline"
   ],
   "regressionsFoundByCiAndFixed": [
     {
@@ -250,5 +260,35 @@
       "commit": "5c4b98c",
       "what": "Guided folded each change's receipts, hiding file and per-receipt debt"
     }
-  ]
+  ],
+  "consolidationCheck": {
+    "shippedCodeIdentity": {
+      "core": "git diff 8ee8ee2 e289c91 -- src pyproject.toml: empty",
+      "idleproof": "git diff cd59df2 d3b9ed5 -- src bin public package.json: empty"
+    },
+    "portalProducerPins": {
+      "core8ee8ee2": 5,
+      "idleproofcd59df2": 5,
+      "gatesRun": 40054815816,
+      "result": "green"
+    },
+    "migrations": "none vs Portal base 198215f and vs Portal main",
+    "contracts": {
+      "change-envelope-1": {
+        "core": "8->8",
+        "idleproof": "3->5 (readers)"
+      },
+      "idleproof.portal-snapshot.v1": "1/1/3 -> 1/1/3",
+      "diffwitness.integration-config.v1": "1/1 -> 1/1",
+      "dwchg_": {
+        "core": "10->10",
+        "idleproof": "16->17",
+        "portal": "28->36 (exact-id consumers)"
+      },
+      "producerWritersChanged": false,
+      "portalIngestFunctionChanged": false,
+      "snapshotChange": "text of the bounded summary field only"
+    },
+    "verdict": "consistent (machine); owner review pending"
+  }
 }
