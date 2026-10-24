@@ -63,15 +63,23 @@ including the mandatory producer step after a restore).
 **0.3 Install the candidate in an isolated directory** (the current `dw` / `idleproof` stay installed):
 
 ```bash
+ls -d ~/alpha-stab                     # must fail (No such file or directory): start from a new, empty directory
 mkdir -p ~/alpha-stab && cd ~/alpha-stab
 git clone https://github.com/PaititeResearch/diffwitness core && git -C core checkout 8ee8ee29a5fcc0557b968d9033485251ad80a8e2
 git clone https://github.com/PaititeResearch/idleproof idleproof && git -C idleproof checkout cd59df2c6d4b9e74c5ae6224079e1db8b443e088
 git clone https://github.com/PaititeResearch/idleproof-portal portal && git -C portal checkout 5c4b98ccfb21b4ba1929f94ab4bd7a4eb4a7e548
-python3 -m venv core-venv && core-venv/bin/pip wheel ./core --no-deps -w wheels && core-venv/bin/pip install --no-deps wheels/diffwitness-*.whl
-(cd idleproof && npm pack) && npm install --prefix ~/alpha-stab/npm ./idleproof/idleproof-0.10.0.tgz
-sha256sum wheels/diffwitness-*.whl idleproof/idleproof-0.10.0.tgz          # write both on the sheet
+git -C core rev-parse HEAD; git -C idleproof rev-parse HEAD; git -C portal rev-parse HEAD   # exactly the three SHAs above
+python3 -m venv core-venv && core-venv/bin/pip wheel ./core --no-deps -w wheels
+(cd idleproof && npm pack)
+ls wheels/*.whl idleproof/*.tgz        # exactly two lines: wheels/diffwitness-0.4.0a1-py3-none-any.whl and idleproof/idleproof-0.10.0.tgz
+sha256sum wheels/diffwitness-0.4.0a1-py3-none-any.whl idleproof/idleproof-0.10.0.tgz   # write both on the sheet
+core-venv/bin/pip install --no-deps wheels/diffwitness-0.4.0a1-py3-none-any.whl
+npm install --prefix ~/alpha-stab/npm ./idleproof/idleproof-0.10.0.tgz
 mkdir -p bin && ln -sf ~/alpha-stab/core-venv/bin/dw bin/dw && ln -sf ~/alpha-stab/npm/node_modules/.bin/idleproof bin/idleproof
 ```
+
+If `ls` lists more than one wheel or tarball, stop: something was left from an earlier attempt; start
+again in a new empty directory rather than choosing a file.
 
 In **every** terminal used below, first run `export PATH="$HOME/alpha-stab/bin:$PATH"` and check that
 `command -v dw` and `command -v idleproof` both print a path under `~/alpha-stab/bin`. Only `dw` and
@@ -190,7 +198,7 @@ Precondition: the §0.2b gate is confirmed again, and take a fresh one now:
 | Item | PASS / FAIL / PARTIAL / NOT RUN | Observed (ids, messages) |
 |---|---|---|
 | 0.2b backup gate confirmed (Portal data, local state, tools; WSL export before C4) | | |
-| 0.3 digests (wheel, tarball) | | |
+| 0.3 exact SHAs checked out, exactly one wheel and one tarball, digests | | |
 | 1 doctor Python env line | | |
 | S1.3 Stop accepted, certificate | | |
 | S1.4 Native Proof bound to `dwchg_` | | |

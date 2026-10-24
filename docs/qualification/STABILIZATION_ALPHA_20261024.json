@@ -5,17 +5,21 @@
   "dossier": "docs/qualification/STABILIZATION_ALPHA_20261024.md",
   "humanRecipe": "docs/qualification/STABILIZATION_ALPHA_HUMAN_RECIPE_20261024.md",
   "status": {
-    "machine": "Core MACHINE PASS (e289c91); IdleProof d3b9ed5 and Portal 5c4b98c hosted CI fully green",
+    "machine": "Core MACHINE PASS (machine qualification head e289c91; branch head dadf874 docs-only, 27/27); IdleProof d3b9ed5 32/32 and Portal 5c4b98c 12/12 hosted CI green",
     "human": "NOT RUN",
-    "decision": "NOT ALPHA READY; not yet READY FOR HUMAN ALPHA ACCEPTANCE",
+    "decision": "MACHINE PASS + REVIEW COMPLETED / LOCAL BACKUP PENDING / HUMAN NOT RUN / NOT ALPHA READY",
     "readyForHumanAcceptanceRequires": [
-      "owner review of the consolidated manifest Core + Local + Portal",
-      "owner review of the inter-product contracts (machine check: consistent)",
-      "confirmed local WSL/Portal backup (recipe 0.2b)"
+      "confirmed local WSL/Portal backup (recipe 0.2b) - NOT ATTESTED"
     ],
     "merged": false,
     "released": false,
-    "alphaReady": false
+    "alphaReady": false,
+    "ownerReview": {
+      "date": "2026-10-24",
+      "record": "PaititeResearch/diffwitness#74 comment 6383703423",
+      "verdict": "manifest and inter-product contracts consistent with the code heads; no blocking divergence for entering the human recipe",
+      "reserve": "JSON head fields (addressed by lastVerifiedBranchHead and hostedCi.coreBranchHeads)"
+    }
   },
   "branch": "claude/diffwitness-idleproof-alpha-d0lv1f",
   "products": [
@@ -51,6 +55,12 @@
           "lot": "CI",
           "issue": "PaititeResearch/diffwitness#138",
           "scope": "scripts/installation_resolution_acceptance.py only (cherry-pick -x of 92994a4)"
+        },
+        {
+          "commit": "dadf874",
+          "lot": "docs",
+          "issue": "PaititeResearch/diffwitness#74",
+          "scope": "qualification docs only"
         }
       ],
       "artifactDigest": {
@@ -62,7 +72,13 @@
         "verdict": "MACHINE PASS",
         "head": "e289c915565096807c76104a05b06e0e05b608d0",
         "ci": "27/27 green (test run 40085568577 24/24, proofbench, continuitybench, integrated-product-smoke)"
-      }
+      },
+      "lastVerifiedBranchHead": {
+        "commit": "dadf874bd87f063cdbee1b764c7b993763dcf661",
+        "scope": "docs only after e289c91 (3 files under docs/qualification)",
+        "ci": "27/27 green (test run 40087320497, proofbench 40087320490, continuitybench 40087320492, integrated-product-smoke 40087320528)"
+      },
+      "branchHeadPolicy": "machineStatus.head is the last commit changing code, tests or CI scripts and carries the MACHINE PASS; lastVerifiedBranchHead is the newest branch head whose CI is recorded here; a commit cannot name itself, so later docs-only heads and their CI are recorded in the journal and on PaititeResearch/diffwitness#74"
     },
     {
       "product": "idleproof-local",
@@ -228,7 +244,30 @@
         "core": "8ee8ee2",
         "idleproof": "cd59df2"
       }
-    }
+    },
+    "coreBranchHeads": [
+      {
+        "head": "e289c91",
+        "runs": {
+          "test": 40085568577
+        },
+        "green": 27,
+        "red": 0,
+        "kind": "machine qualification head"
+      },
+      {
+        "head": "dadf874",
+        "runs": {
+          "test": 40087320497,
+          "proofbench": 40087320490,
+          "continuitybench": 40087320492,
+          "integratedProductSmoke": 40087320528
+        },
+        "green": 27,
+        "red": 0,
+        "kind": "docs only"
+      }
+    ]
   },
   "humanRequired": [
     "S1",
@@ -242,7 +281,8 @@
     "host-side trigger of H12 (root-owned staging directory) not established",
     "hosted Windows/macOS behaviour of the evidence environment until CI reports",
     "dw setup without --idleproof-command arms the idleproof entry point bundled in the Core wheel; IdleProof Local then sees no session",
-    "pipx: fixed in the qualification script only (PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1 in the disposable pipx env); pipx shared-library maintenance is not representative of product installs and is not exercised offline"
+    "pipx: fixed in the qualification script only (PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1 in the disposable pipx env); pipx shared-library maintenance is not representative of product installs and is not exercised offline",
+    "Portal prealpha-pr-gates.yml still checks out the producers as TFourniax/tooltest and TFourniax/tooltest-2 (pre-transfer names, served by redirect); documentation/distribution debt to clear before a public release"
   ],
   "regressionsFoundByCiAndFixed": [
     {

@@ -407,3 +407,20 @@ green on the exact heads; **ALPHA READY** requires the operator's human acceptan
      (`e289c91`, same tree) and can be closed by its author.
   5. *After HUMAN PASS only:* merge plan of the three drafts onto their bases, then towards `main`, and a
      release with recorded artefact digests — each needs the owner's explicit approval.
+- 2026-10-24 — **owner's technical review of the consolidated manifest and contracts**
+  (PaititeResearch/diffwitness#74, comment 6383703423; PaititeResearch/diffwitness#137, comment
+  6383713859). Verdict: manifest and inter-product contracts consistent with the code heads Core `8ee8ee2`,
+  IdleProof `cd59df2`, Portal `5c4b98c` and the exact Portal CI pins; **no blocking divergence for entering
+  the human recipe**. CI recorded at review time: Core `dadf874` 27/27 (docs only after `e289c91`, itself
+  27/27), IdleProof `d3b9ed5` 32/32, Portal `5c4b98c` 12/12. Reserves handled in this entry's commit: (a)
+  the JSON named `e289c91` as the last machine head — `products[core].lastVerifiedBranchHead`
+  (`dadf874`, runs 40087320497 / 40087320490 / 40087320492 / 40087320528) and `hostedCi.coreBranchHeads`
+  are added, the `e289c91` records are kept, and `branchHeadPolicy` states that a commit cannot name
+  itself (later docs-only heads are recorded here and on #74); (b) recipe §0.3 now starts from a new empty
+  directory, checks the three checked-out SHAs and **exactly one wheel and one tarball** before computing
+  digests and installing by exact file name. Residual recorded: Portal gates still check out the producers
+  as `TFourniax/tooltest` / `TFourniax/tooltest-2` (pre-transfer names, working by redirect) — to clear
+  before a public release. Status: **MACHINE PASS + REVIEW COMPLETED / LOCAL BACKUP PENDING (§0.2b not
+  attested) / HUMAN NOT RUN / NOT ALPHA READY.** No installation, Portal stop, migration or reboot on the
+  reference installation before the backup is attested; backup files (SQL dump, archives) hold secrets
+  and are never uploaded.
