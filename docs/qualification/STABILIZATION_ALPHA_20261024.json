@@ -7,7 +7,7 @@
   "status": {
     "machine": "local suites green on the heads below; hosted CI recorded in the dossier journal",
     "human": "NOT RUN",
-    "decision": "PARTIAL",
+    "decision": "PARTIAL (READY FOR HUMAN ALPHA ACCEPTANCE once the out-of-scope pipx CI step is fixed or waived and Core CI re-run)",
     "merged": false,
     "released": false,
     "alphaReady": false
@@ -88,12 +88,19 @@
           "commit": "cd59df2",
           "lot": "L3",
           "issue": "PaititeResearch/idleproof#29"
+        },
+        {
+          "commit": "d3b9ed5",
+          "lot": "L3",
+          "issue": "PaititeResearch/idleproof#29",
+          "scope": "CI smoke scripts only"
         }
       ],
       "artifactDigest": {
         "npmPackSha256": "eca434f137e89dc9333205422588a413470eebfcf15acae67190d1e7940fdeda",
         "producedWith": "Node 22.22.0, npm 10.9.4"
-      }
+      },
+      "note": "codeHead is the last commit changing shipped code; d3b9ed5 changes only scripts/ (not in the npm package)"
     },
     {
       "product": "portal",
@@ -102,7 +109,7 @@
         "pr": "PaititeResearch/idleproof-portal#50",
         "commit": "198215fb8a2dcc16d6f381fba13603821306b8f6"
       },
-      "codeHead": "87d92ef06f908856faf1bf0793d659e6250b64f9",
+      "codeHead": "5c4b98ccfb21b4ba1929f94ab4bd7a4eb4a7e548",
       "draftPr": "PaititeResearch/idleproof-portal#56",
       "packageVersion": "0.1.0-alpha.1 (unchanged)",
       "commits": [
@@ -135,6 +142,11 @@
           "commit": "87d92ef",
           "lot": "CI",
           "issue": null
+        },
+        {
+          "commit": "5c4b98c",
+          "lot": "L4",
+          "issue": "PaititeResearch/idleproof-portal#55"
         }
       ],
       "migrations": [],
@@ -172,11 +184,42 @@
     "idleproofNpmTest": "924 tests: 916 pass, 0 fail, 8 skipped on cd59df2",
     "explainBench": "30/30 exact paths, 2 safe fallbacks",
     "idleproofPerf": "PASS x3 on cd59df2: hook p95 10.6-11.8 ms, Stop 73.6-75.8 ms (budgets 150 / 750 ms)",
-    "portal": "vitest 446/446, typecheck, build and 4 gates OK on 06ec369 (87d92ef changes CI pins only)",
+    "portal": "ci:app on 5c4b98c: build, typecheck, vitest 446/446, architecture/deployment/migration/dependency gates, bundle budget",
     "recipeDryRun": "S1, S2 and S2.7 through the exact installed hooks (dw setup --idleproof-command): accepted causal and bound in Local with the same dwchg_; refusal stable-fail; reverted tree no-change; missing runner explained",
-    "coreSourceDistributionSmoke": "sdist smoke on 8d7ae4d: 888 tests OK, 53 skipped (on 8ee8ee2: 3 test_status_cli failures, fixed by 8d7ae4d)"
+    "coreSourceDistributionSmoke": "sdist smoke on 8d7ae4d: 888 tests OK, 53 skipped (on 8ee8ee2: 3 test_status_cli failures, fixed by 8d7ae4d)",
+    "idleproofContextConsumerReplay": "real Core context consumer job replayed locally with and without grammars: base 12/12, cd59df2 9/12, d3b9ed5 12/12"
   },
-  "hostedCi": "see the dossier journal (section 10); a job not run, cancelled or skipped is not counted as passed",
+  "hostedCi": {
+    "core": {
+      "head": "3f33162",
+      "run": 40054367942,
+      "green": 21,
+      "red": 3,
+      "red_jobs": "installed wheel commercial-alpha journeys x3 (pipx step, outside the candidate, identical on base)",
+      "also_green": [
+        "proofbench",
+        "continuitybench",
+        "integrated-product-smoke"
+      ]
+    },
+    "idleproof": {
+      "head": "d3b9ed5",
+      "run": 40054713702,
+      "result": "all green (test, Atlas, Deep, project-understanding)"
+    },
+    "portal": {
+      "head": "5c4b98c",
+      "run": 40054815816,
+      "result": "all green prealpha-pr-gates incl. real-stack recipe, launcher L1-L6, auto-debt, G1-G12",
+      "producerPins": {
+        "core": "8ee8ee2",
+        "idleproof": "cd59df2"
+      }
+    },
+    "notCountedAsPassed": [
+      "Core journeys steps after pipx on macOS/Windows (not run)"
+    ]
+  },
   "humanRequired": [
     "S1",
     "S2",
@@ -190,5 +233,22 @@
     "hosted Windows/macOS behaviour of the evidence environment until CI reports",
     "dw setup without --idleproof-command arms the idleproof entry point bundled in the Core wheel; IdleProof Local then sees no session",
     "Core CI 'installed wheel commercial-alpha journeys' (all OS) red because pipx>=1.18 requires pip>=26.1 with --no-index; workflow unchanged vs base; proposed fix: pin pipx<1.18 (not applied)"
+  ],
+  "regressionsFoundByCiAndFixed": [
+    {
+      "product": "core",
+      "commit": "8d7ae4d",
+      "what": "3 test_status_cli fixtures assumed pytest in the suite interpreter"
+    },
+    {
+      "product": "idleproof",
+      "commit": "d3b9ed5",
+      "what": "3 CI smokes expected the first-declaration fallback removed by #29"
+    },
+    {
+      "product": "portal",
+      "commit": "5c4b98c",
+      "what": "Guided folded each change's receipts, hiding file and per-receipt debt"
+    }
   ]
 }

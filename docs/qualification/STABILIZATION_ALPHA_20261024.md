@@ -306,3 +306,43 @@ green on the exact heads; **ALPHA READY** requires the operator's human acceptan
      `Scripts\python.exe` venvs), standalone binaries ×3, optional syntax providers ×3, composite Action,
      static checks, causal semantics benchmark, native Understand → Prove → Owe → Continuity,
      ContinuityBench.
+- 2026-10-24 — **hosted CI on IdleProof `cd59df2` (PaititeResearch/idleproof#55, run 40052171223):
+  regression introduced by L3, CONFIRMED and fixed.** Every other job is green (Node 20/22/24 × three
+  OS, ExplainBench + perf budgets, installed journeys ×3, paged memory export, first-extraction phases,
+  Atlas, Deep, project understanding, contracts, browser). *Real Core context consumer* (6 jobs: three
+  OS × two Core refs) failed at `scripts/structure-core-smoke.mjs`: three CI smokes outside `npm test`
+  (`structure-core`, `structure-languages`, `structure-all-providers`) asked "Inspect invented" (a decoy
+  in a string) and expected the file's **first real declaration** as the subject — the fallback L3
+  removes. The whole job was replayed locally, in order, with and without the optional grammars,
+  against this candidate's Core: base `7c8ffee` 12/12; `cd59df2` 9/12 (those three); fix `d3b9ed5`
+  (scripts only, shipped code unchanged) 12/12. The adapted smokes assert a null subject, exactly the
+  AST declarations (never the decoy) and run their cache-invalidation checks on the declarations.
+- 2026-10-24 — **Portal gates on `87d92ef` (run 40052300295): regression introduced by L4, CONFIRMED
+  and fixed.** Green: replay from zero, app node22/node24, edge, memory card, continuity producers ×2,
+  auto-debt real stack, **alpha-local launcher real stack L1–L6** (exercises L6), project understanding
+  with real Core/Local/Chromium. Red: *longitudinal memory / real stack recipe* — phase first-project
+  P3 (`app.py` not visible) and P9 (per-receipt debt texts not visible after signing in again) — and the
+  G1–G12 aggregation that refuses incomplete evidence. Cause: L4 folded each change's receipts in a
+  closed `<details>` in Guided, and the recipe reads the visible text (`innerText`): information shown
+  before the candidate was hidden by default, contrary to L4's own rule. Fix `5c4b98c`: the group is
+  open by default in both views (still foldable); the route test pins it. Local `ci:app` (build,
+  typecheck, 446/446, four gates, bundle budget) green; gates re-dispatched on `5c4b98c`.
+- 2026-10-24 — **hosted CI after the fixes.**
+  - Core `3f33162` (`test` run 40054367942): 21/24 jobs green — including *release package preflight*
+    (sdist suite) and the 12 `test` jobs — plus `proofbench`, `continuitybench` and
+    `integrated-product-smoke` green. Red: the three *installed wheel commercial-alpha journeys* jobs, at
+    the pipx step only (finding 2 above; identical on the base; fix proposed on
+    PaititeResearch/diffwitness#137, not applied without the owner's decision). Their five later steps
+    are **not run** on macOS/Windows (5/5 PASS locally on Linux).
+  - IdleProof `d3b9ed5` (run 40054713702 and the Atlas / Deep / project-understanding workflows): **all
+    green**, including the six *real Core context consumer* jobs.
+  - Portal `5c4b98c` (`prealpha-pr-gates` run 40054815816, producers pinned to Core `8ee8ee2` and IdleProof
+    `cd59df2`, code-identical to the branch heads): **all green**, including the longitudinal
+    memory real-stack recipe, the alpha-local launcher real stack (L1–L6), auto-debt on the real stack
+    and the G1–G12 aggregation.
+- 2026-10-24 — **decision at the end of this session: PARTIAL.** Every lot is implemented, reproduced and
+  machine-qualified; three regressions introduced by the candidate were found by hosted CI and fixed
+  (`8d7ae4d`, `d3b9ed5`, `5c4b98c`). The candidate becomes **READY FOR HUMAN ALPHA ACCEPTANCE** once the
+  only remaining red check — the Core pipx tooling step, outside this candidate — is fixed (one line,
+  verified locally) or explicitly waived by the owner, and the Core CI is re-run. **HUMAN NOT RUN.** Not
+  merged, not released, **not ALPHA READY**.

@@ -16,7 +16,7 @@ the identity):
 |---|---|---|
 | Core | PaititeResearch/diffwitness | `8ee8ee29a5fcc0557b968d9033485251ad80a8e2` (later branch commits: tests and docs only) |
 | IdleProof Local | PaititeResearch/idleproof | `cd59df2c6d4b9e74c5ae6224079e1db8b443e088` |
-| Portal | PaititeResearch/idleproof-portal | `87d92ef06f908856faf1bf0793d659e6250b64f9` |
+| Portal | PaititeResearch/idleproof-portal | `5c4b98ccfb21b4ba1929f94ab4bd7a4eb4a7e548` |
 
 **Rules for the operator.** Do not merge anything. Do not run `supabase db reset`, `docker volume rm`,
 `git reset --hard`, `git clean -fdx` or `restore` unless §8 says so. Do not paste a token on a command
@@ -50,7 +50,7 @@ restorable with the candidate and with the previous version.
 mkdir -p ~/alpha-stab && cd ~/alpha-stab
 git clone https://github.com/PaititeResearch/diffwitness core && git -C core checkout 8ee8ee29a5fcc0557b968d9033485251ad80a8e2
 git clone https://github.com/PaititeResearch/idleproof idleproof && git -C idleproof checkout cd59df2c6d4b9e74c5ae6224079e1db8b443e088
-git clone https://github.com/PaititeResearch/idleproof-portal portal && git -C portal checkout 87d92ef06f908856faf1bf0793d659e6250b64f9
+git clone https://github.com/PaititeResearch/idleproof-portal portal && git -C portal checkout 5c4b98ccfb21b4ba1929f94ab4bd7a4eb4a7e548
 python3 -m venv core-venv && core-venv/bin/pip wheel ./core --no-deps -w wheels && core-venv/bin/pip install --no-deps wheels/diffwitness-*.whl
 (cd idleproof && npm pack) && npm install --prefix ~/alpha-stab/npm ./idleproof/idleproof-0.10.0.tgz
 sha256sum wheels/diffwitness-*.whl idleproof/idleproof-0.10.0.tgz          # write both on the sheet
