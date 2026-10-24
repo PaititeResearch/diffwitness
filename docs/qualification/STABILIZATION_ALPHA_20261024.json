@@ -7,9 +7,11 @@
   "status": {
     "machine": "Core MACHINE PASS (machine qualification head e289c91; branch head dadf874 docs-only, 27/27); IdleProof d3b9ed5 32/32 and Portal 5c4b98c 12/12 hosted CI green",
     "human": "NOT RUN",
-    "decision": "MACHINE PASS + REVIEW COMPLETED / LOCAL BACKUP PENDING / HUMAN NOT RUN / NOT ALPHA READY",
+    "decision": "MACHINE PASS + MANIFEST REVIEW COMPLETE / HUMAN NOT RUN / NOT ALPHA READY; preserved local pilot data may be reused with non-destructive preflight",
     "readyForHumanAcceptanceRequires": [
-      "confirmed local WSL/Portal backup (recipe 0.2b) - NOT ATTESTED"
+      "Before the human trial, confirm exact candidate SHAs and full CI",
+      "Verify the existing WSL/Portal/IdleProof data are present and the current Portal ownership and database schema are compatible before reusing the stack; do not reset, clean or overwrite existing state",
+      "Obtain explicit operator go-ahead before stopping a live Portal instance or rebooting Windows. Backups are optional for this pilot but their absence means recovery from accidental data loss is not guaranteed"
     ],
     "merged": false,
     "released": false,
@@ -18,7 +20,19 @@
       "date": "2026-10-24",
       "record": "PaititeResearch/diffwitness#74 comment 6383703423",
       "verdict": "manifest and inter-product contracts consistent with the code heads; no blocking divergence for entering the human recipe",
-      "reserve": "JSON head fields (addressed by lastVerifiedBranchHead and hostedCi.coreBranchHeads)"
+      "reserve": "Manifest and contracts reviewed on shipped code heads. Current local SQL/WSL/IdleProof data are presumed retained because no destructive operations were requested, but must be inspected read-only before reuse. No backup exists; a lost state cannot be recovered from GitHub snapshots."
+    },
+    "backupPolicy": {
+      "ownerDecisionDate": "2026-10-24",
+      "portalSqlBackupCreated": false,
+      "idleproofStateArchiveCreated": false,
+      "wslExportCreated": false,
+      "preserveExistingData": true,
+      "noResetAuthorized": true,
+      "policy": "The owner did not run snapshot scripts, and explicitly wants to REUSE current WSL, Portal SQL and IdleProof state, not declare those data disposable. No heavy WSL backup is required solely to begin a non-destructive human recipe. All existing data must be kept. If the test cannot be conducted without destructive or schema-incompatible operations, stop and request approval or isolate it.",
+      "existingDataState": "NOT VERIFIED ON THE OPERATOR MACHINE; only the operator can verify locally",
+      "risk": "There is NO known restorable local backup for SQL/IdleProof/WSL, so a future corruption or deletion cannot be undone using GitHub code refs.",
+      "githubCodeRefs": "8 snapshots/alpha-20261024-before-claude/* GitHub refs pin code history only, not state, SQL, WSL or secrets."
     }
   },
   "branch": "claude/diffwitness-idleproof-alpha-d0lv1f",
@@ -282,7 +296,8 @@
     "hosted Windows/macOS behaviour of the evidence environment until CI reports",
     "dw setup without --idleproof-command arms the idleproof entry point bundled in the Core wheel; IdleProof Local then sees no session",
     "pipx: fixed in the qualification script only (PIPX_DISABLE_SHARED_LIBS_AUTO_UPGRADE=1 in the disposable pipx env); pipx shared-library maintenance is not representative of product installs and is not exercised offline",
-    "Portal prealpha-pr-gates.yml still checks out the producers as TFourniax/tooltest and TFourniax/tooltest-2 (pre-transfer names, served by redirect); documentation/distribution debt to clear before a public release"
+    "Portal prealpha-pr-gates.yml still checks out the producers as TFourniax/tooltest and TFourniax/tooltest-2 (pre-transfer names, served by redirect); documentation/distribution debt to clear before a public release",
+    "No restorable Portal SQL, IdleProof state or WSL snapshot was made (operator confirms scripts never run). This is a known recovery risk, NOT authorization to discard or recreate existing data. Local references remain untouched by the GitHub work."
   ],
   "regressionsFoundByCiAndFixed": [
     {
@@ -329,6 +344,6 @@
       "portalIngestFunctionChanged": false,
       "snapshotChange": "text of the bounded summary field only"
     },
-    "verdict": "consistent (machine); owner review pending"
+    "verdict": "consistent (machine); owner review complete; preserved local pilot may be reused only after read-only inventory and non-destructive compatibility preflight"
   }
 }

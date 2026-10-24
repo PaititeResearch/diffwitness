@@ -32,35 +32,62 @@ dw --version; command -v dw; npm ls -g idleproof; command -v idleproof
 grep -n 'diffwitness' ~/.bashrc ~/.profile 2>/dev/null     # keep any line as it is: the fix must work with it
 ```
 
-**0.2 Back up the retained Portal** (only if a local Portal stack already holds data). From the Portal
-checkout you use today:
+**0.2 Read-only preservation check — reuse the EXISTING WSL, Portal and IdleProof data.**
+
+**Owner decision (2026-10-24):** the previously proposed snapshot scripts were **not run**.
+No Portal SQL backup, IdleProof state archive or WSL distribution export exists as part of this
+qualification. The owner explicitly wants to **preserve and reuse the current environment**;
+the data are NOT declared disposable. This correction removes a disproportionate
+mandatory-backup gate, **not** the obligation to protect existing data.
+
+Do not run `supabase db reset`, `docker volume rm`, `git reset --hard`, `git clean -fdx`,
+or `scripts/alpha-local.sh restore` on any existing installation. A GitHub snapshot branch
+preserves code only, never SQL, credentials, private notes or local WSL files.
+
+**Before any stop/start or candidate install, inspect the existing setup in read-only mode:**
 
 ```bash
-mkdir -m 700 -p ~/alpha/backups
-scripts/alpha-local.sh backup ~/alpha/backups/portal-before-stab-$(date +%F).backup
-scripts/alpha-local.sh stop
+echo '=== Current WSL projects (read-only) ==='
+for p in "$HOME/code/dw-human-test" "$HOME/alpha/portal" "$HOME/atlas-unified-pr52-trial/outil"; do
+  if [ -d "$p" ]; then
+    echo "$p"
+    if git -C "$p" rev-parse --is-inside-work-tree >/dev/null 2>&1; then git -C "$p" rev-parse HEAD; fi
+  fi
+done
+echo '=== State presence; never print secrets ==='
+test -f "$HOME/code/dw-human-test/.idleproof/state.json" && echo 'IdleProof state present' || echo 'IdleProof state not found here'
+docker ps -a --filter label=com.supabase.cli.project=idleproof-portal --format '{{.Names}} {{.Status}}' || true
+ss -H -ltn '( sport = :3000 )' || true
 ```
 
-The candidate Portal adds **no migration** (same schema as Portal `main`), so this backup stays
-restorable with the candidate and with the previous version.
+Confirm that existing accounts/projects/receipts are visible in Portal before proceeding;
+record the current Portal checkout path, running process owner, source commit and schema.
+Do not assume the state is healthy solely because GitHub CI is green.
 
-**0.2b Backup gate — confirm before §0.3, and again before C4.** Nothing below starts until every line
-is confirmed and written on the sheet. All checks are read-only; never test `restore` on the reference
-installation.
+**Crucial isolation limit:** the Portal launcher uses the fixed Docker/Supabase project
+`idleproof-portal`, its retained volumes, a shared state directory and port 3000. A new
+`~/alpha-stab/portal` Git checkout does **not** create a separate database. The intended
+test can reuse the existing database without resetting it, only if the operator has verified
+that the schema/credentials are compatible and no unrecognised Portal processes are running.
+Existing Portal #56 introduces no new migration relative to the referenced main/base;
+this does not guarantee that an arbitrary local stack has the same migrations installed.
 
-| Check | Command (WSL) | Expected |
-|---|---|---|
-| Portal data backup exists, private, non-empty | `ls -l ~/alpha/backups/` | the `.backup` file of today, mode `-rw-------`, size > 0, message `Backup written: … bytes, …` seen |
-| It is a launcher backup of the current schema | `head -n 1 ~/alpha/backups/portal-before-stab-*.backup` | one line starting with `-- idleproof-portal-alpha-backup/1` followed by the schema version (the line `restore` checks) |
-| It holds data rows | `grep -c '^COPY ' ~/alpha/backups/portal-before-stab-*.backup` | a non-zero count |
-| Local producer state of the real test repository | `tar czf ~/alpha/backups/<repo>-local-state-$(date +%F).tgz -C <repo> .idleproof .git/diffwitness && tar tzf ~/alpha/backups/<repo>-local-state-*.tgz \| head` | archive listed, no error |
-| Previous tools recorded | the §0.1 output | written on the sheet |
-| (Recommended before C4) whole distribution | PowerShell: `wsl --shutdown` then `wsl --export Ubuntu-24.04 <disk>\backups\ubuntu-pre-stab.tar` | file present; with Docker Desktop the Docker volumes live outside this export, the Portal data backup above is what covers them |
+Stopping the known existing Portal with **its own** `scripts/alpha-local.sh stop` preserves
+Supabase Docker volumes. Obtain operator approval before any live-service interruption.
+A new candidate Portal can then start against the retained stack (same project name),
+subject to ownership and migration preflight. Never run two Portal launchers at once.
+Do not make a destructive recovery attempt to resolve an unexpected migration,
+credential mismatch, port collision or H12 permission problem; stop and diagnose.
 
-A backup is restorable only into a stack at the same schema version (§8 of the first-use guide,
-including the mandatory producer step after a restore).
+**Optional minimal backup (not a precondition):** after verifying the current Portal
+checkout and compatibility, the operator may execute its existing
+`scripts/alpha-local.sh backup FILE` command to save SQL rows only, with mode 0600.
+Do not upload the backup or any private state. A full WSL export is not required.
+**Important limitation:** because no local backup was taken, loss or corruption of the
+retained SQL/IdleProof state may be irreversible. Reusing it is possible; reverting
+modified files or changing Git branches is not equivalent to data restoration.
 
-**0.3 Install the candidate in an isolated directory** (the current `dw` / `idleproof` stay installed):
+**0.3 Install candidate source/tools in a separate directory** (the current `dw` / `idleproof` stay installed; the existing Portal Docker state is shared):
 
 ```bash
 ls -d ~/alpha-stab                     # must fail (No such file or directory): start from a new, empty directory
@@ -86,11 +113,19 @@ In **every** terminal used below, first run `export PATH="$HOME/alpha-stab/bin:$
 `idleproof` are linked: **no Python directory is added to `PATH`** (E2E-ALPHA-01 needed a PATH prefix;
 this recipe must pass without one).
 
-**0.4 Start the candidate Portal:**
+**0.4 Start candidate Portal only after the preservation check in §0.2:**
+
+If the earlier Portal is running, **do not** start this checkout in parallel. Identify
+the previous Portal checkout and its process, obtain operator approval, then stop it
+via that checkout's own `scripts/alpha-local.sh stop` (retaining volumes).
 
 ```bash
 cd ~/alpha-stab/portal && scripts/alpha-local.sh start && scripts/alpha-local.sh status
 ```
+
+Use the same retained database only after confirming schema compatibility. Recheck
+that the previous accounts, projects, receipts and decisions remain visible. If any
+item disappears or the launcher reports an unexpected migration, STOP; do not reset.
 
 Expected: `Portal: http://localhost:3000 (running)`, `Ingest: … (running)`. Sign in with your existing
 account (or create one as in the first-use guide §4). Write on the sheet the first 40 characters of
@@ -178,8 +213,11 @@ timeline, debt and DEC-S1 are intact.
 
 ## C4. Real Windows reboots (×2, ≈15 min + reboots)
 
-Precondition: the §0.2b gate is confirmed again, and take a fresh one now:
-`scripts/alpha-local.sh backup ~/alpha/backups/portal-before-reboot-$(date +%F).backup`.
+**Before C4, repeat the read-only preservation and compatibility checks in §0.2.**
+Two actual Windows reboots are still required for an eventual full H12 human qualification.
+Reboot interrupts other WSL processes; obtain explicit operator approval for each restart.
+The backup remains optional, but without one a loss of SQL/WSL state may be permanent.
+Do not claim reboot-safe recovery until both real tests have passed.
 
 1. Leave Portal **running**. Restart Windows (Start → Restart; not `wsl --shutdown`).
 2. Open Ubuntu: `cd ~/alpha-stab/portal && export PATH="$HOME/alpha-stab/bin:$PATH" && scripts/alpha-local.sh start`.
@@ -197,7 +235,7 @@ Precondition: the §0.2b gate is confirmed again, and take a fresh one now:
 
 | Item | PASS / FAIL / PARTIAL / NOT RUN | Observed (ids, messages) |
 |---|---|---|
-| 0.2b backup gate confirmed (Portal data, local state, tools; WSL export before C4) | | |
+| 0.2 existing Portal/IdleProof data present, schema and process ownership checked read-only, no destructive reset; previous tools recorded | | |
 | 0.3 exact SHAs checked out, exactly one wheel and one tarball, digests | | |
 | 1 doctor Python env line | | |
 | S1.3 Stop accepted, certificate | | |
@@ -223,9 +261,10 @@ FAIL with the rows concerned. Post the sheet on PaititeResearch/diffwitness#74.
 - **Local tools:** remove `~/alpha-stab/bin` from `PATH` (close the terminals); the previously installed
   `dw` / `idleproof` recorded in §0.1 are untouched. In the test project, `dw setup --agent codex` run with
   the previous `dw` re-points the hooks to it.
-- **Portal:** `cd ~/alpha-stab/portal && scripts/alpha-local.sh stop`, then start the previous Portal
-  checkout as before. No migration was added, so the data written during this recipe stays readable by
-  it. Restoring the §0.2 backup is needed **only** if you want to discard the recipe's receipts
-  (first-use guide §8, including the mandatory producer step).
+- **Portal:** `cd ~/alpha-stab/portal && scripts/alpha-local.sh stop`, then
+  start the earlier Portal checkout only after verifying it is compatible with the retained
+  database. The candidate adds no migrations, but this is an **application rollback, not
+  a database restore**. No backup exists. Keep all historical SQL rows, decisions and receipts;
+  any data loss must be reported as such; never run a reset/restore to conceal an error.
 - **Moved-aside staging directories** (`…start-secrets/*.unwritable-*`) are kept for inspection; remove
   them later with the command the launcher printed, only once inspected.

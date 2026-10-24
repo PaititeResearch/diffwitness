@@ -424,3 +424,17 @@ green on the exact heads; **ALPHA READY** requires the operator's human acceptan
   attested) / HUMAN NOT RUN / NOT ALPHA READY.** No installation, Portal stop, migration or reboot on the
   reference installation before the backup is attested; backup files (SQL dump, archives) hold secrets
   and are never uploaded.
+
+- 2026-10-24 — **Owner correction: retained WSL/Portal/IdleProof data may be reused; no reset
+  has been performed.** Earlier mandatory backup gate §0.2b had never been completed: no
+  Portal SQL dump, IdleProof archive or WSL export was made. The GitHub snapshot branches protect
+  code refs only. The owner did **not** designate existing data disposable and does **not** want
+  to repeat the initial onboarding unnecessarily. Recipe §0.2 now requires a read-only check of
+  the existing Portal/IdleProof state, code versions, schema and process ownership, followed by
+  a compatible non-destructive reuse of the retained Docker volumes. The fixed Supabase project
+  name/port means a new checkout is not a database sandbox. No deletion, reset, SQL restore or
+  automated backup is performed by this document; a small SQL backup is optional, but absence
+  of one is an acknowledged recovery risk. Obtain operator approval before stopping the live
+  Portal and before each Windows reboot. This dated decision supersedes only the old
+  mandatory-backup *gate*, never earlier evidence of its noncompletion. The next human acceptance
+  is still NOT RUN and no new candidate is ALPHA READY.
