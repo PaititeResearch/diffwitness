@@ -187,7 +187,8 @@ class ResolutionTests(unittest.TestCase):
         (self.repo / "src" / "pkg").mkdir(parents=True)
         (self.repo / "lib").mkdir()
         (site / "__editable__.pkg-1.0.pth").write_text(f"{self.repo / 'src'}\n", encoding="utf-8")
-        (site / "other.pth").write_text(f"# comment\n{self.root}\n../../../../lib\n", encoding="utf-8")
+        (site / "other.pth").write_text(f"# comment\n{self.root}\n../../../../lib\nwin32\n", encoding="utf-8")
+        (site / "win32").mkdir()
         (site / "__editable__.flat-1.0.pth").write_text("import __editable___flat_1_0_finder; __editable___flat_1_0_finder.install()\n", encoding="utf-8")
         (site / "__editable___flat_1_0_finder.py").write_text(
             f"MAPPING: dict[str, str] = {{'flat': {str(self.repo / 'flat')!r}, 'mod': {str(self.repo / 'tools' / 'mod.py')!r}}}\nNAMESPACES = {{}}\n",
@@ -198,6 +199,7 @@ class ResolutionTests(unittest.TestCase):
         self.assertIn(".", roots)
         self.assertIn("tools", roots)
         self.assertNotIn("..", roots)
+        self.assertFalse(any(root.startswith(".venv") for root in roots), roots)
         self.assertTrue(all(not Path(root).is_absolute() for root in roots))
 
     def test_apply_activates_the_environment_and_maps_editable_roots_into_the_worktree(self) -> None:

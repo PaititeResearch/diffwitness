@@ -128,6 +128,7 @@ def _finder_paths(site: Path, line: str) -> list[str]:
 def editable_source_roots(environment_root: Path, source_repo: Path) -> tuple[str, ...]:
     """Import roots inside ``source_repo`` that the environment adds through editable installs."""
     repo = source_repo.resolve()
+    environment = environment_root.resolve()
     roots: list[str] = []
     for site in _site_packages(environment_root):
         try:
@@ -149,8 +150,13 @@ def editable_source_roots(environment_root: Path, source_repo: Path) -> tuple[st
                     if not candidate.is_absolute():
                         candidate = site / candidate
                     try:
-                        relative = candidate.resolve().relative_to(repo)
+                        resolved = candidate.resolve()
+                        relative = resolved.relative_to(repo)
                     except (OSError, ValueError):
+                        continue
+                    # Paths of installed packages inside a project-local environment (e.g.
+                    # pywin32.pth) are not the project's source.
+                    if resolved == environment or environment in resolved.parents:
                         continue
                     key = relative.as_posix() or "."
                     if key not in roots:
