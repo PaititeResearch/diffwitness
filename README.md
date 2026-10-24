@@ -168,6 +168,8 @@ max = 10
 
 A configured evidence command is only reported as ready when its executable is available. DiffWitness can suggest a safe equivalent when one is detected, but it does not silently rewrite project configuration.
 
+Evidence commands run with the **project's** Python environment, not DiffWitness's own: `python_env` (or `DIFFWITNESS_PYTHON_ENV`) when set, otherwise a `.venv/` or `venv/` at the repository root, otherwise an inherited `VIRTUAL_ENV`, otherwise the inherited `PATH`. DiffWitness never installs packages; a missing test runner is reported as `cause: test-runner-unavailable`, not as a failing test. `dw doctor` shows the selected environment. See [`docs/EVIDENCE_ENVIRONMENT.md`](docs/EVIDENCE_ENVIRONMENT.md).
+
 ### 2. Choose live runtime protection — optional
 
 Inspect the environment:

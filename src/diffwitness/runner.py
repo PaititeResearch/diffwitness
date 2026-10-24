@@ -10,6 +10,7 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, TypeVar
 
+from .evidence_env import apply_python_environment, resolve_python_environment
 from .models import CommandResult, RunSet
 
 
@@ -63,8 +64,14 @@ def _tail(value: str | None) -> str:
     return value[-TAIL_CHARS:]
 
 
-def command_env(source_repo: Path) -> dict[str, str]:
+def command_env(source_repo: Path, *, cwd: Path | None = None) -> dict[str, str]:
+    """Environment for an evidence or preparation command run in ``cwd`` for ``source_repo``.
+
+    The project's Python environment is selected explicitly (see ``evidence_env``) instead of
+    whichever ``python`` the caller's PATH happens to list first, e.g. DiffWitness's own runtime.
+    """
     env = os.environ.copy()
+    apply_python_environment(env, resolve_python_environment(source_repo), cwd=cwd)
     node_modules = source_repo / "node_modules"
     if node_modules.is_dir():
         bins = node_modules / ".bin"
@@ -266,7 +273,7 @@ def run_command(
         errors="backslashreplace",
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        env=command_env(source_repo),
+        env=command_env(source_repo, cwd=cwd),
         **_popen_group_kwargs(),
     )
     windows_job = _windows_job_for_process(proc)
